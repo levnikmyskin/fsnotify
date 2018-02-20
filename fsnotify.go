@@ -29,6 +29,7 @@ const (
 	Remove
 	Rename
 	Chmod
+	IsDir
 )
 
 func (op Op) String() string {
@@ -49,6 +50,9 @@ func (op Op) String() string {
 	}
 	if op&Chmod == Chmod {
 		buffer.WriteString("|CHMOD")
+	}
+	if op&IsDir == IsDir{
+		buffer.WriteString("|ISDIR")
 	}
 	if buffer.Len() == 0 {
 		return ""

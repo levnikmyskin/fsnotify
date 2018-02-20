@@ -333,5 +333,8 @@ func newEvent(name string, mask uint32) Event {
 	if mask&unix.IN_ATTRIB == unix.IN_ATTRIB {
 		e.Op |= Chmod
 	}
+	if mask&unix.IN_ISDIR == unix.IN_ISDIR{
+		e.Op |= IsDir
+	}
 	return e
 }
