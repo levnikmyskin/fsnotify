@@ -114,6 +114,9 @@ const (
 	sysFSMOVEDTO    = 0x80
 	sysFSMOVESELF   = 0x800
 
+	// TODO Same value as Windows flag. Please change it if necessary
+	sysFSDIRCHANGE = 0x00000002
+
 	// Special events
 	sysFSIGNORED   = 0x8000
 	sysFSQOVERFLOW = 0x4000
@@ -135,6 +138,9 @@ func newEvent(name string, mask uint32) Event {
 	}
 	if mask&sysFSATTRIB == sysFSATTRIB {
 		e.Op |= Chmod
+	}
+	if mask&sysFSDIRCHANGE == sysFSDIRCHANGE{
+		e.Op |= IsDir
 	}
 	return e
 }
@@ -541,6 +547,9 @@ func toWindowsFlags(mask uint64) uint32 {
 	if mask&(sysFSMOVE|sysFSCREATE|sysFSDELETE) != 0 {
 		m |= syscall.FILE_NOTIFY_CHANGE_FILE_NAME | syscall.FILE_NOTIFY_CHANGE_DIR_NAME
 	}
+	if mask&(sysFSDIRCHANGE) != 0{
+		m |= syscall.FILE_NOTIFY_CHANGE_DIR_NAME
+	}
 	return m
 }
 
@@ -556,6 +565,8 @@ func toFSnotifyFlags(action uint32) uint64 {
 		return sysFSMOVEDFROM
 	case syscall.FILE_ACTION_RENAMED_NEW_NAME:
 		return sysFSMOVEDTO
+	case syscall.FILE_NOTIFY_CHANGE_DIR_NAME:
+		return sysFSDIRCHANGE
 	}
 	return 0
 }
